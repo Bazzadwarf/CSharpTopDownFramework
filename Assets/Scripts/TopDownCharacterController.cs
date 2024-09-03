@@ -1,10 +1,14 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/// <summary>
+/// A class to control the top down character.
+/// Implements the player controls for moving and shooting.
+/// Updates the player animator so the character animates based on input.
+/// </summary>
 public class TopDownCharacterController : MonoBehaviour
 {
-    #region Framework Stuff
+    #region Framework Variables
 
     //The inputs that we need to retrieve from the input system.
     private InputAction m_moveAction;
@@ -72,7 +76,9 @@ public class TopDownCharacterController : MonoBehaviour
         //store any movement inputs into m_playerDirection - this will be used in FixedUpdate to move the player.
         m_playerDirection = m_moveAction.ReadValue<Vector2>();
         
-        //pass the movement values to the animator
+        // ~~ handle animator ~~
+        // If there is movement, set the animator flags.
+        // If no movement occurs, only set the speed to retain the direction the character is facing.
         if (m_playerDirection.magnitude != 0)
         {
             m_animator.SetFloat("Horizontal", m_playerDirection.x);
@@ -84,13 +90,12 @@ public class TopDownCharacterController : MonoBehaviour
             m_animator.SetFloat("Speed", m_playerDirection.magnitude);
         }
 
-        //check if an attack has been triggered.
+        // check if an attack has been triggered.
         if (m_attackAction.IsPressed())
         {
-            //attack if it has - we will just log this for now as we will look at attacking in the tutorial sessions.
+            // just log that an attack has been registered for now
+            // we will look at how to do this in future sessions.
             Debug.Log("Attack!");
         }
     }
-
-    
 }
