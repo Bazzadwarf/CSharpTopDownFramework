@@ -72,7 +72,17 @@ public class TopDownCharacterController : MonoBehaviour
         //store any movement inputs into m_playerDirection - this will be used in FixedUpdate to move the player.
         m_playerDirection = m_moveAction.ReadValue<Vector2>();
         
-        //TODO handle animator.
+        //pass the movement values to the animator
+        if (m_playerDirection.magnitude != 0)
+        {
+            m_animator.SetFloat("Horizontal", m_playerDirection.x);
+            m_animator.SetFloat("Vertical", m_playerDirection.y);
+            m_animator.SetFloat("Speed", m_playerDirection.magnitude);
+        }
+        else
+        {
+            m_animator.SetFloat("Speed", m_playerDirection.magnitude);
+        }
 
         //check if an attack has been triggered.
         if (m_attackAction.IsPressed())
