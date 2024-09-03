@@ -24,9 +24,9 @@ public class TopDownCharacterController : MonoBehaviour
 
     [Header("Movement parameters")]
     //The speed at which the player moves
-    [SerializeField] private float m_playerSpeed = 1f;
+    [SerializeField] private float m_playerSpeed = 500f;
     //The maximum speed the player can move
-    [SerializeField] private float m_playerMaxSpeed = 100f;
+    [SerializeField] private float m_playerMaxSpeed = 1000f;
 
     #endregion
 
@@ -63,7 +63,7 @@ public class TopDownCharacterController : MonoBehaviour
         float speed = m_playerSpeed > m_playerMaxSpeed ? m_playerMaxSpeed : m_playerSpeed;
         
         //apply the movement to the character using the clamped speed value.
-        m_rigidbody.linearVelocity = m_playerDirection * speed;
+        m_rigidbody.linearVelocity = m_playerDirection * (speed * Time.fixedDeltaTime);
     }
     
     /// <summary>
@@ -73,21 +73,18 @@ public class TopDownCharacterController : MonoBehaviour
     /// </summary>
     void Update()
     {
-        //store any movement inputs into m_playerDirection - this will be used in FixedUpdate to move the player.
+        // store any movement inputs into m_playerDirection - this will be used in FixedUpdate to move the player.
         m_playerDirection = m_moveAction.ReadValue<Vector2>();
         
         // ~~ handle animator ~~
-        // If there is movement, set the animator flags.
-        // If no movement occurs, only set the speed to retain the direction the character is facing.
-        if (m_playerDirection.magnitude != 0)
+        // Update the animator speed to ensure that we revert to idle if the player doesn't move.
+        m_animator.SetFloat("Speed", m_playerDirection.magnitude);
+        
+        // If there is movement, set the directional values to ensure the character is facing the way they are moving.
+        if (m_playerDirection.magnitude > 0)
         {
             m_animator.SetFloat("Horizontal", m_playerDirection.x);
             m_animator.SetFloat("Vertical", m_playerDirection.y);
-            m_animator.SetFloat("Speed", m_playerDirection.magnitude);
-        }
-        else
-        {
-            m_animator.SetFloat("Speed", m_playerDirection.magnitude);
         }
 
         // check if an attack has been triggered.
